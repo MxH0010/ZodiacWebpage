@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Structured AI Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .results-box { min-height: 150px; white-space: pre-wrap; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl p-6 md:p-10">
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h1 class="text-3xl font-bold text-gray-800">Structured AI Analysis Form</h1>
+            <a href="home.html" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition duration-150">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Input Form -->
+        <form id="qaForm" class="mb-8 p-6 border border-indigo-100 rounded-lg bg-indigo-50">
+            <h2 class="text-xl font-semibold text-indigo-800 mb-4">Provide Details for Analysis:</h2>
+
+            <div class="mb-4">
+                <label for="q1" class="block text-md font-medium text-gray-700 mb-1">1. What is the main topic you want analyzed?</label>
+                <input type="text" id="q1" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="q2" class="block text-md font-medium text-gray-700 mb-1">2. What are 2-3 key facts or data points related to this topic?</label>
+                <textarea id="q2" rows="2" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm" required></textarea>
+            </div>
+
+            <div class="mb-6">
+                <label for="q3" class="block text-md font-medium text-gray-700 mb-1">3. What is the specific outcome or conclusion you want the AI to generate?</label>
+                <textarea id="q3" rows="3" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm" required></textarea>
+            </div>
+            
+            <button type="submit" id="submitBtn"
+                class="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 disabled:opacity-50">
+                Generate Analysis
+            </button>
+        </form>
+
+        <!-- Response Area -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">AI-Generated Structured Analysis</h2>
+            <div id="loadingIndicator" class="text-center p-4 hidden">
+                <div class="animate-spin inline-block w-6 h-6 border-4 border-indigo-500 border-t-transparent rounded-full"></div>
+                <p class="mt-2 text-indigo-600">Combining answers and generating report...</p>
+            </div>
+            <div id="responseOutput" class="results-box bg-gray-50 p-4 rounded-lg border border-gray-200 text-gray-700">
+                Your structured report will appear here after submission.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GLOBAL CONSTANTS 
+        const API_KEY = "";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+        const MAX_RETRIES = 5;
+
+        // DOM Elements
+        const form = document.getElementById('qaForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const responseOutput = document.getElementById('responseOutput');
+
+        /**
+         * Implements exponential backoff for API retries.
+         */
+        async function fetchWithRetry(url, options, attempt = 1) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response;
+            } catch (error) {
+                if (attempt < MAX_RETRIES) {
+                    const delay = Math.pow(2, attempt) * 1000;
+                    console.warn(`Request failed. Retrying in ${delay / 1000}s... (Attempt ${attempt}/${MAX_RETRIES})`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchWithRetry(url, options, attempt + 1);
+                }
+                throw new Error(`API failed after ${MAX_RETRIES} attempts. Details: ${error.message}`);
+            }
+        }
+
+        /**
+         * Calls the Gemini API with the combined structured query.
+         */
+        async function getGeminiResponse(combinedQuery) {
+            const systemPrompt = "You are a specialized analytical consultant. Take the user's structured input, combine the details, and generate a cohesive, professional, and insightful analysis report or conclusion. Use the provided key facts to ground your response.";
+
+            const payload = {
+                contents: [{ parts: [{ text: combinedQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            };
+
+            const response = await fetchWithRetry(API_URL, options);
+            const result = await response.json();
+            
+            const candidate = result.candidates?.[0];
+
+            if (candidate && candidate.content?.parts?.[0]?.text) {
+                return candidate.content.parts[0].text;
+            } else {
+                return "I apologize, the AI could not generate a coherent analysis based on the input. Please try again with clearer details.";
+            }
+        }
+
+        // --- Event Handlers ---
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const q1 = document.getElementById('q1').value.trim();
+            const q2 = document.getElementById('q2').value.trim();
+            const q3 = document.getElementById('q3').value.trim();
+
+            // Combine structured answers into a single, clear prompt for the AI
+            const combinedQuery = `Topic: ${q1}\nKey Facts/Data: ${q2}\nDesired Outcome/Conclusion: ${q3}\n\nBased on these details, please generate the requested analysis report/conclusion.`;
+
+            if (!q1 || !q2 || !q3) {
+                responseOutput.textContent = "Please fill out all fields before submitting.";
+                return;
+            }
+
+            // UI State: Loading
+            submitBtn.disabled = true;
+            loadingIndicator.classList.remove('hidden');
+            responseOutput.textContent = "";
+
+            try {
+                const responseText = await getGeminiResponse(combinedQuery);
+                responseOutput.textContent = responseText;
+            } catch (error) {
+                console.error("Critical API Error:", error);
+                responseOutput.textContent = `A critical error occurred: ${error.message}`;
+            } finally {
+                // UI State: Done
+                submitBtn.disabled = false;
+                loadingIndicator.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

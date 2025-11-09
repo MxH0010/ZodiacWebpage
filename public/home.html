@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Festive&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: url(https://i.pinimg.com/736x/99/17/07/991707988dbed4476cf28f6c1b793c9c.jpg);
+
+        }
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .greeting {
+            font-family: 'Festive';
+            font-size: 4.2em;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .logout-btn {
+            background-color: #ef4444; /* Red */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .logout-btn:hover {
+            background-color: #dc2626;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Bar with User Info and Logout -->
+        <div class="header-bar">
+            <!-- This will display the stored login username -->
+            <div class="greeting" id="userGreeting"></div> 
+            <button id="logoutButton" class="logout-btn">Logout</button>
+        </div>
+
+        <h1 class="text-3xl font-family Festive text-gray-800"></h1>
+        
+        <!-- Main Content Layout (Two Columns) -->
+        <div class="flex flex-col md:flex-row gap-8">
+            
+            <!-- Left Side: Four Forms/Links (Grid Layout) -->
+            <div class="md:w-2/3">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-400"></h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Form 1: User Profile (Links to form1.html) -->
+                    <div class="p-4 border border-blue-200 rounded-xl shadow-lg bg-white transform hover:scale-[1.02] transition duration-300">
+                        <h3 class="text-xl font-semibold mb-3 text-blue-800">Quiz 1: Find your zodiac</h3>
+                        <p class="text-gray-600 mb-4">What zodiac are you?.</p>
+                        <a href="form1.html" class="block w-full text-center bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition duration-150 font-semibold">
+                            Go to Quiz 1
+                        </a>
+                    </div>
+
+                    <!-- Form 2: Task Manager (Links to form2.html) -->
+                    <div class="p-4 border border-green-200 rounded-xl shadow-lg bg-white transform hover:scale-[1.02] transition duration-300">
+                        <h3 class="text-xl font-semibold mb-3 text-green-800">Quiz 2: Zodiac personaility</h3>
+                        <p class="text-gray-600 mb-4">Who are you in the stars?.</p>
+                        <a href="form2.html" class="block w-full text-center bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 transition duration-150 font-semibold">
+                            Go to Quiz 2
+                        </a>
+                    </div>
+                    <!-- Form 3: Goal Tracker (Links to form3.html) -->
+                    <div class="p-4 border border-purple-200 rounded-xl shadow-lg bg-white transform hover:scale-[1.02] transition duration-300">
+                        <h3 class="text-xl font-semibold mb-3 text-purple-800">Quiz 3: Get inspired</h3>
+                        <p class="text-gray-600 mb-4">Set and monitor long-term objectives.</p>
+                        <a href="form3.html" class="block w-full text-center bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition duration-150 font-semibold">
+                            Go to Quiz 3
+                        </a>
+                    </div>
+
+                    <!-- Form 4: Status Report (Links to form4.html) -->
+                    <div class="p-4 border border-yellow-200 rounded-xl shadow-lg bg-white transform hover:scale-[1.02] transition duration-300">
+                        <h3 class="text-xl font-semibold mb-3 text-yellow-800">Quiz 4: Which rock is...</h3>
+                        <p class="text-gray-600 mb-4">Find intersting facts on gemstones.</p>
+                        <a href="form4.html" class="block w-full text-center bg-yellow-600 text-white p-2 rounded-lg hover:bg-yellow-700 transition duration-150 font-semibold">
+                            Go to Quiz 4
+                        </a>
+                    </div>
+                </div> <!-- End of grid -->
+            </div> <!-- End of md:w-2/3 -->
+
+            <!-- Right Side: Placeholder for Summary/Activity Feed -->
+<div class="w-full min-h-screen bg-cover bg-center bg-no-repeat" style="background-image: url('https://i.pinimg.com/236x/ae/b5/05/aeb5053dcdc1206b5d4a1123a0619a00.jpg');">
+  <!-- Content within your background image element -->
+</div>               
+                </ul>
+            </div>
+        </div> <!-- End of flex row -->
+    </div> <!-- End of max-w-6xl -->
+    <script>
+        const logoutBtn = document.getElementById('logoutButton');
+        const userGreeting = document.getElementById('userGreeting');
+        const LOGIN_PAGE_URL = 'http://localhost:3000/index.html';
+
+        // 1. Check for stored username and display it
+        // CRITICAL: We only read the basic 'currentUser' stored by the index.html
+        const username = localStorage.getItem('currentUser'); 
+
+        if (username) {
+            userGreeting.textContent = `Welcome Home, ${username}!`;
+        } else {
+            // If no user is logged in, redirect them back to the login page
+            window.location.href = LOGIN_PAGE_URL;
+        }
+
+        // 2. Add logout functionality
+        logoutBtn.addEventListener('click', () => {
+            // Remove the stored user token
+            localStorage.removeItem('currentUser');
+            // Remove the now irrelevant displayName as well, just to be clean
+            localStorage.removeItem('currentUserDisplayName'); 
+            // Redirect to the login page
+            window.location.href = LOGIN_PAGE_URL;
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form 1: User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-image: url(https://as2.ftcdn.net/jpg/03/92/62/91/1000_F_392629163_v94pnmOiEYDqrA6UreaRvzYxYDWg8AMt.jpg); }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+    <div class="max-w-xl mx-auto bg-white shadow-xl rounded-xl p-6 md:p-10 border border-blue-200">
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h1 class="text-3xl font-bold text-blue-700">Quiz 2: Who are you according to your zodiac?</h1>
+            <a href="home.html" class="text-sm text-gray-500 hover:text-gray-700 font-medium transition duration-150">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+
+        <form id="dedicatedForm1" class="space-y-4">
+            <p class="text-gray-600 mb-6">Use this quiz to find your personaility traits based on your zodiac</p>
+
+            <div>
+                <label for="displayName" class="block text-sm font-medium text-gray-700">Your Name</label>
+                <input type="text" id="displayName" placeholder="e.g., Jane Doe"
+                    class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+                <label for="birthDate" class="block text-sm font-medium text-gray-700">Your Birth Date</label>
+                <input type="date" id="birthDate" required
+                    class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div id="zodiacResultBox" class="p-4 rounded-lg text-center hidden bg-blue-100 border border-blue-300 shadow-md">
+    <p class="text-xl font-bold text-blue-800 mb-2">
+        Your Zodiac Sign is: <span id="zodiacSign" class="text-blue-900"></span>
+    </p>
+    
+    <p class="text-sm text-gray-700 mt-2">
+        **Personality Type:** <span id="personalityType" class="font-semibold text-gray-900"></span>
+    </p>
+</div>
+
+            <button type="submit"
+                class="mt-4 w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-150">
+                Find My Zodiac
+            </button>
+        </form>
+        
+        <div id="formMessage" class="mt-4 p-3 rounded-lg text-sm hidden"></div>
+    </div>
+    
+<script>
+    // Function to calculate the zodiac sign (kept from previous steps)
+    function getZodiacSign(month, day) {
+        if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return "Aquarius";
+        if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) return "Pisces";
+        if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return "Aries";
+        if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return "Taurus";
+        if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return "Gemini";
+        if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return "Cancer";
+        if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return "Leo";
+        if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return "Virgo";
+        if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return "Libra";
+        if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return "Scorpio";
+        if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return "Sagittarius";
+        if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return "Capricorn";
+        return "Invalid Date";
+    }
+
+    // NEW: Function to return personality type based on sign
+    function getPersonalityType(sign) {
+        // Note: The zodiac sign strings here MUST match the return values in getZodiacSign
+        switch (sign) {
+            case "Aries": return "Energetic, courageous, and pioneering.";
+            case "Taurus": return "Patient, reliable, and persistent.";
+            case "Gemini": return "Adaptable, communicative, and intellectual.";
+            case "Cancer": return "Emotional, loving, and highly imaginative.";
+            case "Leo": return "Generous, dramatic, and creative.";
+            case "Virgo": return "Analytical, hardworking, and practical.";
+            case "Libra": return "Diplomatic, charming, and peaceful.";
+            case "Scorpio": return "Passionate, resourceful, and focused.";
+            case "Sagittarius": return "Optimistic, adventurous, and freedom-loving.";
+            case "Capricorn": return "Disciplined, responsible, and ambitious.";
+            case "Aquarius": return "Innovative, independent, and humanitarian.";
+            case "Pisces": return "Compassionate, artistic, and gentle.";
+            default: return "Unknown personality type.";
+        }
+    }
+
+    document.getElementById('dedicatedForm1').addEventListener('submit', function(e) {
+        e.preventDefault(); 
+
+        const birthDateInput = document.getElementById('birthDate').value;
+        const resultBox = document.getElementById('zodiacResultBox');
+        const zodiacSignElement = document.getElementById('zodiacSign');
+        const personalityTypeElement = document.getElementById('personalityType'); // NEW Element
+
+        if (!birthDateInput) {
+            alert("Please enter your birth date.");
+            return;
+        }
+
+        // Parse the date. We remove the zodiac symbols from getZodiacSign for easier mapping.
+        const [year, month, day] = birthDateInput.split('-').map(Number); 
+
+        const zodiac = getZodiacSign(month, day);
+        const personality = getPersonalityType(zodiac); // Calculate personality
+
+        // Display the results
+        zodiacSignElement.textContent = zodiac;
+        personalityTypeElement.textContent = personality;
+        resultBox.classList.remove('hidden');
+
+        // Clear the form message
+        document.getElementById('formMessage').classList.add('hidden');
+    });
+</script>
+</body>
+</html>

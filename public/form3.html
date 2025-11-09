@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form 1: User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-image: url(https://i.pinimg.com/736x/81/3f/2c/813f2c9c9178e100a2e849b2212c4c29.jpg); }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+    <div class="max-w-xl mx-auto bg-white shadow-xl rounded-xl p-6 md:p-10 border border-blue-200">
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h1 class="text-3xl font-bold text-blue-700">Inspirational Quote Finder</h1>
+            <a href="home.html" class="text-sm text-gray-500 hover:text-gray-700 font-medium transition duration-150">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+
+        <form id="dedicatedForm1" class="space-y-4">
+            <p class="text-gray-600 mb-6">Use this form to be inspired</p>
+
+            <div>
+                <label for="displayName" class="block text-sm font-medium text-gray-700">Your Name</label>
+                <input type="text" id="displayName" placeholder="e.g., Jane Doe"
+                    class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+          <div>
+    <label for="moodSelector" class="block text-sm font-medium text-gray-700">How are you feeling today?</label>
+    <select id="moodSelector"
+        class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <option value="" disabled selected>Select your current mood</option>
+        <option value="happy">Happy 😊</option>
+        <option value="sad">Sad 😥</option>
+        <option value="motivated">Motivated 💪</option>
+        <option value="stressed">Stressed 😩</option>
+        <option value="calm">Calm 🧘</option>
+    </select>
+</div>
+
+<div id="quoteDisplayBox" class="p-4 rounded-lg hidden bg-yellow-50 border-l-4 border-yellow-400">
+    <p class="text-sm font-medium text-gray-500 mb-1">Your Inspiration:</p>
+    <blockquote class="text-lg italic text-gray-800">
+        "<span id="inspirationalQuote"></span>"
+    </blockquote>
+    <p class="text-right text-xs text-gray-600 mt-2">
+        – <span id="quoteAuthor"></span>
+    </p>
+</div>
+
+            <button type="submit"
+                class="mt-4 w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-150">
+                Find inspiration!
+            </button>
+        </form>
+        
+        <div id="formMessage" class="mt-4 p-3 rounded-lg text-sm hidden"></div>
+    </div>
+
+
+    <script>
+      
+    // Data structure containing quotes mapped to moods
+    const inspirationalQuotes = {
+        happy: [
+            { quote: "The purpose of our lives is to be happy.", author: "Dalai Lama" },
+            { quote: "Happiness is a warm puppy.", author: "Charles M. Schulz" },
+        ],
+        sad: [
+            { quote: "The wound is the place where the light enters you.", author: "Rumi" },
+            { quote: "Even the darkest night will end and the sun will rise.", author: "Victor Hugo" },
+        ],
+        motivated: [
+            { quote: "The best way to predict the future is to create it.", author: "Peter Drucker" },
+            { quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+        ],
+        stressed: [
+            { quote: "Tension is who you think you should be. Relaxation is who you are.", author: "Chinese Proverb" },
+            { quote: "Breathe. It's just a bad day, not a bad life.", author: "Johnny Depp" },
+        ],
+        calm: [
+            { quote: "The greatest discovery of all time is that a human can alter his future by merely altering his attitude.", author: "Oprah Winfrey" },
+            { quote: "Peace begins with a smile.", author: "Mother Teresa" },
+        ]
+    };
+
+    document.getElementById('dedicatedForm1').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const mood = document.getElementById('moodSelector').value;
+        const quoteBox = document.getElementById('quoteDisplayBox');
+        const quoteElement = document.getElementById('inspirationalQuote');
+        const authorElement = document.getElementById('quoteAuthor');
+        
+        // Hide the form message used for profile save simulation
+        document.getElementById('formMessage').classList.add('hidden');
+
+        if (!mood) {
+            quoteBox.classList.add('hidden');
+            alert("Please select a mood to get your inspirational quote!");
+            return;
+        }
+
+        // Get the array of quotes for the selected mood
+        const quotesForMood = inspirationalQuotes[mood];
+        
+        // Pick a random quote from the array
+        const randomIndex = Math.floor(Math.random() * quotesForMood.length);
+        const selectedQuote = quotesForMood[randomIndex];
+
+        // Update the HTML elements
+        quoteElement.textContent = selectedQuote.quote;
+        authorElement.textContent = selectedQuote.author;
+        
+        // Show the quote box
+        quoteBox.classList.remove('hidden');
+    });
+</script>
+    </script>
+</body>
+</html>

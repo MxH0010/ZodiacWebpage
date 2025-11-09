@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form 1: User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-image: url(https://wallpapers.com/images/hd/starry-night-inspired-pattern-myop25su1iiyodbu.jpg); }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+    <div class="max-w-xl mx-auto bg-white shadow-xl rounded-xl p-6 md:p-10 border border-blue-200">
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h1 class="text-3xl font-bold text-blue-700">Gemstone Facts</h1>
+            <a href="home.html" class="text-sm text-gray-500 hover:text-gray-700 font-medium transition duration-150">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+
+        <form id="dedicatedForm1" class="space-y-4">
+            <p class="text-gray-600 mb-6">Use this form to find out more about gemstones</p>
+
+            <div>
+                <label for="displayName" class="block text-sm font-medium text-gray-700">Your Name</label>
+                <input type="text" id="displayName" placeholder="e.g., Jane Doe"
+                    class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+    <label for="rockSelector" class="block text-sm font-medium text-gray-700">Choose a Gemstone:</label>
+    <select id="rockSelector"
+        class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <option value="" disabled selected>Select a gemstone to learn about</option>
+        <option value="Amethyst">Amethyst</option>
+        <option value="Opal">Opal</option>
+        <option value="Diamond">Diamond</option>
+        <option value="Onyx">Onyx</option>
+        <option value="Emerald">Emerald</option>
+        <option value="Ruby">Ruby</option>
+    </select>
+</div>
+
+<div id="factDisplayBox" class="p-4 rounded-lg hidden bg-teal-50 border-l-4 border-teal-400">
+    <p class="text-lg font-bold text-teal-800 mb-1">
+        Facts about <span id="rockName" class="text-teal-900"></span>:
+    </p>
+    <p class="text-sm text-gray-700 mt-2">
+        <span id="rockFact"></span>
+    </p>
+</div>
+
+            <button type="submit"
+                class="mt-4 w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-150">
+                Search!
+            </button>
+        </form>
+        
+        <div id="formMessage" class="mt-4 p-3 rounded-lg text-sm hidden"></div>
+    </div>
+
+
+   <script>
+    // Data structure containing facts mapped to rock names
+    const rockFacts = {
+        Amethyst: {
+            fact: "Amethyst is a purple variety of quartz and is the birthstone for February. Historically, it was believed to prevent intoxication.",
+            color: "purple-800"
+        },
+        Opal: {
+            fact: "Opal is unique because of its ability to diffract light, leading to a stunning play-of-color. It's composed of hydrated amorphous silica.",
+            color: "blue-800"
+        },
+        Diamond: {
+            fact: "Diamond is the hardest natural substance on Earth, made of pure carbon arranged in a crystal structure. Its name comes from the Greek 'adamas,' meaning unconquerable.",
+            color: "gray-800"
+        },
+        Onyx: {
+            fact: "Onyx is a variety of the silicate mineral chalcedony. It's commonly used as a protective stone and is known for its parallel banding.",
+            color: "black"
+        },
+        Emerald: {
+            fact: "Emerald is a gemstone and a variety of the mineral beryl, colored green by trace amounts of chromium and sometimes vanadium. Cleopatra was famous for her love of emeralds.",
+            color: "green-800"
+        },
+        Ruby: {
+            fact: "Ruby is one of the four precious stones, second in hardness only to diamond. Its vibrant red color comes from the element chromium.",
+            color: "red-800"
+        }
+    };
+
+    document.getElementById('dedicatedForm1').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const rock = document.getElementById('rockSelector').value;
+        const factBox = document.getElementById('factDisplayBox');
+        const rockNameElement = document.getElementById('rockName');
+        const rockFactElement = document.getElementById('rockFact');
+        
+        // Hide the form message (no longer relevant)
+        document.getElementById('formMessage').classList.add('hidden');
+
+        if (!rock) {
+            factBox.classList.add('hidden');
+            alert("Please select a gemstone to get a fact!");
+            return;
+        }
+
+        // Look up the fact based on the selected rock
+        const selectedFact = rockFacts[rock];
+        
+        if (selectedFact) {
+            // Update the HTML elements
+            rockNameElement.textContent = rock;
+            rockFactElement.textContent = selectedFact.fact;
+            
+            // Show the fact box
+            factBox.classList.remove('hidden');
+        }
+    });
+</script>
+</body>
+</html>
