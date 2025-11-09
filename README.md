@@ -1,0 +1,5 @@
+Hey, I'm Madalyn Hedges and this is my final project for the year, 2025. I made a page with the theme that is 90s/zodiac inspired. It has 4 quizzes/form for the user to fill out to explore and find out more information about temselvves in terms of what zodiac they are.
+I struggled greatly on getting the page aestethics to line up correctly on the page. For example, after you login or register, the picture on the right is suppose tobe towards the bottom and centered. I'm not sure why I couldn't fix that.
+Some things I would change would be adjusting the fonts so each form has a unique look, fixing the picture on the main page, and change how the logout button looks. I didn't pay attention much to the logout button and I'll be honest- I completely forgot about it until the end.
+Overall, I am very happy how this turned out and I got to use css tailwind which is new to me and took awhile for me to learn. But I think it's more useful because there is less files to keep track of so that I wouldn't have to use a CSS file every time for a new html document.
+Which in turn, made my VSC look a lot less crowded and less overwhleming to me. 
